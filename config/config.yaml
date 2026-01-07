@@ -1,0 +1,88 @@
+# Configuration for Automated Analytics Tool
+
+paths:
+  raw_data: "data/raw/"
+  processed_data: "data/processed/"
+  forecasts: "data/forecasts/"
+  reports: "reports/"
+  logs: "logs/"
+
+data:
+  source_files:
+    daily_metrics: "daily_metrics.csv"
+    historical_data: "historical_data.csv"
+  
+  date_columns:
+    - "date"
+    - "timestamp"
+    - "created_at"
+  
+  numeric_columns:
+    - "sales"
+    - "revenue"
+    - "users"
+    - "conversion_rate"
+  
+  target_column: "sales"
+
+model:
+  test_size: 0.2
+  forecast_periods: 7
+  confidence_level: 0.9
+  
+  features:
+    - "day_of_week"
+    - "day_of_month"
+    - "month"
+    - "quarter"
+    - "lag_1"
+    - "lag_7"
+    - "lag_14"
+    - "rolling_mean_7"
+    - "rolling_std_7"
+
+reporting:
+  company_name: "Your Company"
+  report_title: "Daily Analytics Report"
+  
+  sheets:
+    - "Executive Summary"
+    - "Detailed Metrics"
+    - "Forecast"
+    - "Trends Analysis"
+    - "Recommendations"
+  
+  formatting:
+    header_color: "1F497D"
+    highlight_color: "F2F2F2"
+    positive_color: "00B050"
+    negative_color: "FF0000"
+    neutral_color: "FFC000"
+
+automation:
+  schedule_time: "08:00"
+  email_notifications: false
+  recipients:
+    - "analytics-team@company.com"
+    - "manager@company.com"
+  
+  excel:
+    template_file: "excel_files/report_template.xlsm"
+    vba_macros_enabled: true
+  
+  powerbi:
+    enabled: true
+    dataset_refresh: true
+    connection_string: "Provider=Microsoft.Mashup.OleDb.1"
+
+logging:
+  level: "INFO"
+  file: "logs/analytics_tool.log"
+  max_size_mb: 10
+  backup_count: 5
+
+performance:
+  enable_caching: true
+  cache_duration_hours: 24
+  parallel_processing: false
+  max_workers: 4
