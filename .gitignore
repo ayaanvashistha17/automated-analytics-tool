@@ -10,6 +10,9 @@ ENV/
 env.bak/
 venv.bak/
 
+# Virtual Environment (but keep requirements.txt)
+venv/
+
 # IDE
 .vscode/
 .idea/
@@ -25,20 +28,50 @@ venv.bak/
 ehthumbs.db
 Thumbs.db
 
-# Data files
+# Project specific - DO NOT COMMIT GENERATED FILES
 data/processed/
 data/forecasts/
 reports/
-*.csv
+logs/
+*.log
 *.xlsx
 *.xlsm
+*.csv
 
-# Secrets
-.env
-config/secrets.yaml
+# Temp and helper scripts
+*.tmp
+*.temp
+create_*.py
+fix_*.py
+improve_data.py
+showcase_project.py
+demo.sh
+
+# Screenshot text files
+screenshots/*.txt
 
 # Jupyter
 .ipynb_checkpoints
 
-# Logs
-*.log
+# Secrets
+.env
+config/secrets.yaml
+*.key
+*.pem
+
+# Coverage reports
+.coverage
+htmlcov/
+
+# pytest
+.pytest_cache/
+
+# macOS system files
+.DS_Store
+
+# Windows system files
+desktop.ini
+
+# VS Code
+.vscode/settings.json
+.vscode/launch.json
