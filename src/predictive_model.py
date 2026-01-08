@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
-import logging # Force Update
+import logging  # Force Update
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

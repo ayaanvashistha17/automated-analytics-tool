@@ -7,7 +7,7 @@ from datetime import datetime
 import openpyxl
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from openpyxl.utils import get_column_letter
-import logging # Force Update
+import logging  # Force Update
 import os
 
 logging.basicConfig(level=logging.INFO)
