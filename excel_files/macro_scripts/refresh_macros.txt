@@ -8,20 +8,20 @@ Option Explicit
 Sub RefreshAllData()
     ' Refresh all data connections and calculations
     On Error GoTo ErrorHandler
-    
+
     Application.ScreenUpdating = False
     Application.Calculation = xlCalculationManual
     Application.EnableEvents = False
-    
+
     ' Update timestamp
     ThisWorkbook.Worksheets("Dashboard").Range("LastUpdate").Value = Now
-    
+
     ' Refresh all queries
     Dim qry As WorkbookQuery
     For Each qry In ThisWorkbook.Queries
         qry.Refresh
     Next qry
-    
+
     ' Refresh all pivot tables
     Dim ws As Worksheet
     Dim pt As PivotTable
@@ -30,21 +30,21 @@ Sub RefreshAllData()
             pt.RefreshTable
         Next pt
     Next ws
-    
+
     ' Calculate workbook
     ThisWorkbook.RefreshAll
     Application.Calculate
-    
+
     ' Update Power BI connection if needed
     Call UpdatePowerBIConnection
-    
+
     Application.ScreenUpdating = True
     Application.Calculation = xlCalculationAutomatic
     Application.EnableEvents = True
-    
+
     MsgBox "Data refresh completed successfully!", vbInformation
     Exit Sub
-    
+
 ErrorHandler:
     Application.ScreenUpdating = True
     Application.Calculation = xlCalculationAutomatic
@@ -55,10 +55,10 @@ End Sub
 ' Update Power BI data source
 Sub UpdatePowerBIConnection()
     On Error GoTo PBI_Error
-    
+
     Dim dataSourcePath As String
     dataSourcePath = "C:\Data\Analytics\daily_metrics.csv"
-    
+
     ' Update Power Query connection
     Dim conn As WorkbookConnection
     For Each conn In ThisWorkbook.Connections
@@ -70,9 +70,9 @@ Sub UpdatePowerBIConnection()
                 "Extended Properties="
         End If
     Next conn
-    
+
     Exit Sub
-    
+
 PBI_Error:
     MsgBox "Power BI connection update failed: " & Err.Description, vbExclamation
 End Sub
@@ -80,19 +80,19 @@ End Sub
 ' Generate daily report
 Sub GenerateDailyReport()
     On Error GoTo ReportError
-    
+
     Dim reportDate As String
     reportDate = Format(Date, "YYYY-MM-DD")
-    
+
     ' Create report sheet
     Dim reportSheet As Worksheet
     Set reportSheet = ThisWorkbook.Worksheets.Add
     reportSheet.Name = "Report_" & reportDate
-    
+
     ' Copy dashboard data to report
     ThisWorkbook.Worksheets("Dashboard").Range("A1:G20").Copy
     reportSheet.Range("A1").PasteSpecial Paste:=xlPasteAll
-    
+
     ' Apply formatting
     With reportSheet
         .Range("A1").Value = "Daily Report - " & reportDate
@@ -100,18 +100,18 @@ Sub GenerateDailyReport()
         .Range("A1").Font.Size = 14
         .Columns.AutoFit
     End With
-    
+
     ' Save as separate file
     Dim savePath As String
     savePath = "C:\Reports\Daily_" & reportDate & ".xlsx"
-    
+
     reportSheet.Copy
     ActiveWorkbook.SaveAs savePath, FileFormat:=xlOpenXMLWorkbook
     ActiveWorkbook.Close SaveChanges:=False
-    
+
     MsgBox "Daily report generated: " & savePath, vbInformation
     Exit Sub
-    
+
 ReportError:
     MsgBox "Report generation failed: " & Err.Description, vbCritical
 End Sub
@@ -119,13 +119,13 @@ End Sub
 ' Send email notification
 Sub SendEmailNotification()
     On Error GoTo EmailError
-    
+
     Dim OutlookApp As Object
     Dim MailItem As Object
-    
+
     Set OutlookApp = CreateObject("Outlook.Application")
     Set MailItem = OutlookApp.CreateItem(0)
-    
+
     With MailItem
         .To = "analytics-team@company.com"
         .CC = "manager@company.com"
@@ -136,13 +136,13 @@ Sub SendEmailNotification()
         .Attachments.Add "C:\Reports\Daily_" & Format(Date, "YYYY-MM-DD") & ".xlsx"
         .Send
     End With
-    
+
     Set MailItem = Nothing
     Set OutlookApp = Nothing
-    
+
     MsgBox "Email notification sent!", vbInformation
     Exit Sub
-    
+
 EmailError:
     MsgBox "Email notification failed: " & Err.Description, vbExclamation
 End Sub

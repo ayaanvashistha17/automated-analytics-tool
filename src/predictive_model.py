@@ -8,10 +8,8 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 import matplotlib.pyplot as plt
-import seaborn as sns
 from datetime import datetime, timedelta
 import logging
-import json
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -29,13 +27,6 @@ class PredictiveModel:
     def prepare_features(self, df, target_column='sales'):
         """
         Prepare features for training.
-        
-        Args:
-            df (pd.DataFrame): Input data
-            target_column (str): Column to predict
-            
-        Returns:
-            tuple: Features and target arrays
         """
         df_features = df.copy()
         
@@ -79,14 +70,6 @@ class PredictiveModel:
     def train(self, df, target_column='sales', test_size=0.2):
         """
         Train the linear regression model.
-        
-        Args:
-            df (pd.DataFrame): Training data
-            target_column (str): Column to predict
-            test_size (float): Proportion of data for testing
-            
-        Returns:
-            dict: Model metrics
         """
         try:
             # Prepare features
@@ -131,14 +114,6 @@ class PredictiveModel:
     def forecast(self, df, periods=7, target_column='sales'):
         """
         Generate future forecasts.
-        
-        Args:
-            df (pd.DataFrame): Historical data
-            periods (int): Number of periods to forecast
-            target_column (str): Column to forecast
-            
-        Returns:
-            pd.DataFrame: Forecast results
         """
         if not self.is_trained:
             raise ValueError("Model must be trained before forecasting")
@@ -192,31 +167,15 @@ class PredictiveModel:
         
         logger.info(f"Generated {periods}-day forecast")
         return forecast_df
-    
+
     def save_forecast(self, forecast_df, filename='forecast_results.csv'):
-        """
-        Save forecast results to CSV.
-        
-        Args:
-            forecast_df (pd.DataFrame): Forecast data
-            filename (str): Output filename
-        """
         filepath = f"data/forecasts/{filename}"
         forecast_df.to_csv(filepath, index=False)
         logger.info(f"Saved forecast to {filepath}")
-    
+
     def plot_forecast(self, historical_df, forecast_df, target_column='sales'):
-        """
-        Create visualization of forecast vs historical.
-        
-        Args:
-            historical_df (pd.DataFrame): Historical data
-            forecast_df (pd.DataFrame): Forecast data
-            target_column (str): Target column name
-        """
         plt.figure(figsize=(12, 6))
         
-        # Plot historical data
         plt.plot(
             historical_df['date'],
             historical_df[target_column],
@@ -225,7 +184,6 @@ class PredictiveModel:
             alpha=0.7
         )
         
-        # Plot forecast
         plt.plot(
             forecast_df['date'],
             forecast_df[f'predicted_{target_column}'],
@@ -234,7 +192,6 @@ class PredictiveModel:
             linewidth=2
         )
         
-        # Plot confidence interval
         plt.fill_between(
             forecast_df['date'],
             forecast_df['confidence_interval_lower'],
@@ -251,31 +208,8 @@ class PredictiveModel:
         plt.grid(True, alpha=0.3)
         plt.tight_layout()
         
-        # Save plot
         plot_filename = f"reports/forecast_plot_{datetime.now().strftime('%Y%m%d')}.png"
         plt.savefig(plot_filename, dpi=300)
         logger.info(f"Saved forecast plot to {plot_filename}")
         
         return plt.gcf()
-
-if __name__ == "__main__":
-    # Example usage
-    from data_processor import DataProcessor
-    
-    # Process data
-    processor = DataProcessor()
-    processed_data = processor.process_pipeline()
-    
-    # Train model and forecast
-    model = PredictiveModel()
-    metrics = model.train(processed_data, target_column='sales')
-    
-    print("Model Metrics:")
-    print(json.dumps(metrics, indent=2))
-    
-    # Generate forecast
-    forecast = model.forecast(processed_data, periods=14, target_column='sales')
-    model.save_forecast(forecast)
-    
-    print("\nForecast Results:")
-    print(forecast[['date', 'predicted_sales', 'confidence_interval_lower', 'confidence_interval_upper']])
